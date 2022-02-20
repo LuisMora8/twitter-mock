@@ -17,6 +17,7 @@ class LoginViewController: UIViewController {
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        //if user was previosly logged in, perform the segue to show home screen
         if UserDefaults.standard.bool(forKey: "userLoggedIn") == true {
             self.performSegue(withIdentifier: "LoginToHome", sender: self)
         }
@@ -26,8 +27,8 @@ class LoginViewController: UIViewController {
         
         let myUrl = "https://api.twitter.com/oauth/request_token"
         
+        //using twiiter api to perform login with the login button
         TwitterAPICaller.client?.login(url: myUrl, success: {
-            
             UserDefaults.standard.set(true, forKey: "userLoggedIn")
             self.performSegue(withIdentifier: "LoginToHome", sender: self)
         }, failure: { Error in

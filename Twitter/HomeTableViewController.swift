@@ -9,36 +9,39 @@
 import UIKit
 
 class HomeTableViewController: UITableViewController {
-
+    
+    //array to hold tweets, given as dictionaries
     var tweetArray = [NSDictionary]()
+    //variable to add more tweets to the page when needed
     var numberOfTweets: Int!
     
     let myRefreshControl = UIRefreshControl()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        //load the first tweets
         loadTweets()
-        
+        //load tweets when refresh is performed
         myRefreshControl.addTarget(self, action: #selector(loadTweets), for: .valueChanged)
         tableView.refreshControl = myRefreshControl
     }
     
     @objc func loadTweets(){
-        
+        //default tweets for the home page
         numberOfTweets = 20
-        
+        //base url for setting up the home timeline
         let myUrl = "https://api.twitter.com/1.1/statuses/home_timeline.json"
         let myParams = ["count": numberOfTweets]
-        
+        //using api to see the dictionaries of the tweets
         TwitterAPICaller.client?.getDictionariesRequest(url: myUrl, parameters: myParams, success: { (tweets: [NSDictionary]) in
-            
+            //reloading tweets into array
             self.tweetArray.removeAll()
             for tweet in tweets {
                 self.tweetArray.append(tweet)
             }
-            
+            //reusing table views
             self.tableView.reloadData()
+            //ending the refresh ti prevent infinite refresh
             self.myRefreshControl.endRefreshing()
             
         }, failure: { Error in
@@ -49,9 +52,11 @@ class HomeTableViewController: UITableViewController {
     func loadMoreTweets(){
         
         let myUrl = "https://api.twitter.com/1.1/statuses/home_timeline.json"
+        //adding more tweets to the page
         numberOfTweets += 20
         let myParams = ["count": numberOfTweets]
         
+        //same logic as loadtweets function
         TwitterAPICaller.client?.getDictionariesRequest(url: myUrl, parameters: myParams, success: { (tweets: [NSDictionary]) in
             
             self.tweetArray.removeAll()
@@ -68,6 +73,7 @@ class HomeTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        //when the user reaches the end of the page call load more tweets
         if indexPath.row + 1 == tweetArray.count {
             loadMoreTweets()
         }
@@ -75,22 +81,23 @@ class HomeTableViewController: UITableViewController {
     
 
     @IBAction func onLogout(_ sender: Any) {
+        //when logout button is pressed, logout and dismiss screen
         TwitterAPICaller.client?.logout()
         self.dismiss(animated: true, completion: nil)
         UserDefaults.standard.set(false, forKey: "userLoggedIn")
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        //reusing table view cell
         let cell = tableView.dequeueReusableCell(withIdentifier: "Tweet Cell", for: indexPath) as! TweetCellTableViewCell
-        
+        //setting up the text of the userlabel with the user name
         let user = tweetArray[indexPath.row]["user"] as! NSDictionary
-        
         cell.usernameLabel.text = user["name"] as? String
+        //setting up the text of the tweetlabel with the tweet text content
         cell.tweetContent.text = tweetArray[indexPath.row]["text"] as? String
-        
+        //setting up the image view with the data from of the profile url image
         let imageUrl = URL(string: ((user["profile_image_url_https"] as? String)!))
         let data = try? Data(contentsOf: imageUrl!)
-        
         if let imageData = data {cell.profileImageView.image = UIImage(data: imageData)
         }
         
@@ -106,7 +113,7 @@ class HomeTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
+        //returning the array count to display all the tweets as seperate rows
         return tweetArray.count
     }
 
