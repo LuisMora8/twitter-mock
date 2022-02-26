@@ -19,11 +19,18 @@ class HomeTableViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //load the first tweets
-        loadTweets()
         //load tweets when refresh is performed
         myRefreshControl.addTarget(self, action: #selector(loadTweets), for: .valueChanged)
         tableView.refreshControl = myRefreshControl
+        self.tableView.rowHeight = UITableView.automaticDimension
+        self.tableView.estimatedRowHeight = 150
+    }
+    
+    //load tweets when home page has appeared
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        //load the first tweets
+        self.loadTweets()
     }
     
     @objc func loadTweets(){
@@ -33,7 +40,7 @@ class HomeTableViewController: UITableViewController {
         let myUrl = "https://api.twitter.com/1.1/statuses/home_timeline.json"
         let myParams = ["count": numberOfTweets]
         //using api to see the dictionaries of the tweets
-        TwitterAPICaller.client?.getDictionariesRequest(url: myUrl, parameters: myParams, success: { (tweets: [NSDictionary]) in
+        TwitterAPICaller.client?.getDictionariesRequest(url: myUrl, parameters: myParams as [String : Any], success: { (tweets: [NSDictionary]) in
             //reloading tweets into array
             self.tweetArray.removeAll()
             for tweet in tweets {
@@ -57,7 +64,7 @@ class HomeTableViewController: UITableViewController {
         let myParams = ["count": numberOfTweets]
         
         //same logic as loadtweets function
-        TwitterAPICaller.client?.getDictionariesRequest(url: myUrl, parameters: myParams, success: { (tweets: [NSDictionary]) in
+        TwitterAPICaller.client?.getDictionariesRequest(url: myUrl, parameters: myParams as [String : Any], success: { (tweets: [NSDictionary]) in
             
             self.tweetArray.removeAll()
             for tweet in tweets {
@@ -100,6 +107,10 @@ class HomeTableViewController: UITableViewController {
         let data = try? Data(contentsOf: imageUrl!)
         if let imageData = data {cell.profileImageView.image = UIImage(data: imageData)
         }
+        
+        cell.setLike(tweetArray[indexPath.row]["favorited"] as! Bool)
+        cell.tweetID = tweetArray[indexPath.row]["id"] as! Int
+        cell.setRetweeted(tweetArray[indexPath.row]["retweeted"] as! Bool)
         
         return cell
     }
