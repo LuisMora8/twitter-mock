@@ -4,7 +4,7 @@
 
 This is a basic twitter app to view, compose, favorite, and retweet tweets.
 
-Time spent: **8** hours spent in total
+Time spent: **5** hours spent in total
 
 ## User Stories
 
@@ -24,7 +24,7 @@ The following **bonus** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-<img src="https://i.imgur.com/cjeCFOA.gif" title="Video Walkthrough" width=250 alt="Video Walkthrough"><br>
+<img src="https://i.imgur.com/if2wZRv.gif" title="Video Walkthrough" width=250 alt="Video Walkthrough"><br>
 
 # Part I
 
