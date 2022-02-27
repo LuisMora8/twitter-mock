@@ -24,6 +24,7 @@ class HomeTableViewController: UITableViewController {
         tableView.refreshControl = myRefreshControl
         self.tableView.rowHeight = UITableView.automaticDimension
         self.tableView.estimatedRowHeight = 150
+
     }
     
     //load tweets when home page has appeared

@@ -8,11 +8,15 @@
 
 import UIKit
 
-class TweetViewController: UIViewController {
+class TweetViewController: UIViewController, UITextViewDelegate {
+    
+    @IBOutlet weak var characterLimitLabel: UILabel!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         tweetTextView.becomeFirstResponder() //shows textview is ready
+        
+        tweetTextView.delegate = self
     }
     
     @IBAction func cancel(_ sender: Any) {
@@ -34,14 +38,18 @@ class TweetViewController: UIViewController {
     
     @IBOutlet weak var tweetTextView: UITextView!
     
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        
+        let characterLimit = 280
+        
+        //construct new text if we allowed the users latest edit
+        let newText = NSString(string: tweetTextView.text!).replacingCharacters(in: range, with: text)
+        
+        //updating the character limit
+        characterLimitLabel.text = "\(characterLimit - newText.count)"
+        
+        //the new text should be allowed?
+        return newText.count < characterLimit
     }
-    */
 
 }
