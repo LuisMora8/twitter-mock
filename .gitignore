@@ -69,4 +69,3 @@ fastlane/test_output
 
 #API and secret keys
 keys.xcconfig
-Twitter/keys.xcconfig
